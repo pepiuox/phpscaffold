@@ -1,4 +1,4 @@
-<?
+<?php
 class Scaffold {
 	public $table = array();
 
@@ -43,8 +43,8 @@ echo '<table>\n";
 		$return_string .= '    <th colspan="2" style="text-align:center">Actions</th>';
 		$return_string .= "\n  </tr>\n';
 
-\$r = mysql_query(\$sql) or trigger_error(mysql_error());
-while(\$row = mysql_fetch_array(\$r)) {\n";
+\$r = mysqli_query(\$sql) or trigger_error(mysqli_error());
+while(\$row = mysqli_fetch_array(\$r)) {\n";
 		$return_string .= "	echo '  <tr>\n";
 
 		foreach($this->columns as $v) {
@@ -80,8 +80,8 @@ print_footer();
 include('../inc.functions.php');\n\n";
 
 		$return_string .= "if (isset(\$_GET['delete'])) {
-	mysql_query(\"DELETE FROM `{$this->table}` WHERE `{$this->id_key}` = '\$_GET[{$this->id_key}]}'\");
-	\$msg = (mysql_affected_rows() ? 'Row deleted.' : 'Nothing deleted.');
+	mysqli_query(\"DELETE FROM `{$this->table}` WHERE `{$this->id_key}` = '\$_GET[{$this->id_key}]}'\");
+	\$msg = (mysqli_affected_rows() ? 'Row deleted.' : 'Nothing deleted.');
 	header('Location: {$this->project['list_page']}?msg='.\$msg);
 }
 
@@ -91,7 +91,7 @@ include('../inc.functions.php');\n\n";
 		$column_array = array();
 
 		$return_string .= "if (isset(\$_POST['submitted'])) {
-	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
+	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysqli_real_escape_string(\$value); }\n";
 		$insert = "REPLACE INTO `{$this->table}` (";
 		$counter = 0;
 		foreach($this->columns as $v) {
@@ -116,15 +116,15 @@ include('../inc.functions.php');\n\n";
 		$insert .= ');';
 
 		$return_string .= "	\$sql = \"$insert\";
-	mysql_query(\$sql) or die(mysql_error());
-	\$msg = (mysql_affected_rows()) ? 'Edited row.' : 'Nothing changed.';
+	mysqli_query(\$sql) or die(mysqli_error());
+	\$msg = (mysqli_affected_rows()) ? 'Edited row.' : 'Nothing changed.';
 	header('Location: {$this->project['list_page']}?msg='.\$msg);
 }
 
 
 print_header(\"{$this->project['project_name']} » " . $this->_titleize($this->table) . " » \$action\");
 
-\$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table}` WHERE `{$this->id_key}` = '\${$this->id_key}' \"));
+\$row = mysqli_fetch_array ( mysqli_query(\"SELECT * FROM `{$this->table}` WHERE `{$this->id_key}` = '\${$this->id_key}' \"));
 ?>\n";
 
 $return_string .= $this->_build_form($this->columns, 'Add / Edit') . '

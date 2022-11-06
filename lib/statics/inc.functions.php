@@ -7,11 +7,11 @@ session_start();
 unauthorize_if_not_logged_in();
 
 // DB connect
-if (!mysql_connect($mysql_host, $mysql_user, $mysql_pass))
-	die('Not connected: ' . mysql_error());
-if (!mysql_select_db($dbname))
-	die ("Can't use $dbname: " . mysql_error());
-mysql_query('SET NAMES "utf8"');
+if (!mysqli_connect($mysqli_host, $mysqli_user, $mysqli_pass))
+	die('Not connected: ' . mysqli_error());
+if (!mysqli_select_db($dbname))
+	die ("Can't use $dbname: " . mysqli_error());
+mysqli_query('SET NAMES "utf8"');
 
 function input_date($field, $value) {
 	$day  = $field . '_day';
@@ -80,8 +80,8 @@ function select_range($name, $selected, $start, $finish, $range = 1) {
  */
 function get_data($table_name, $name_col, $id) {
 	$sql = "SELECT $name_col FROM $table_name WHERE id = $id";
-	$r = mysql_query($sql) or trigger_error(mysql_error());
-	$row = mysql_fetch_array($r);
+	$r = mysqli_query($sql) or trigger_error(mysqli_error());
+	$row = mysqli_fetch_array($r);
 	return $row[$name_col];
 }
 
@@ -90,9 +90,9 @@ function get_data($table_name, $name_col, $id) {
  */
 function build_options($table_name, $name_col, $fk_col_name, $selected = null, $id_col = 'id') {
 	$sql = "SELECT $id_col, $name_col FROM $table_name";
-	$r = mysql_query($sql) or trigger_error(mysql_error());
+	$r = mysqli_query($sql) or trigger_error(mysqli_error());
 	$ret = '<select name="'.$fk_col_name.'">';
-	while($row = mysql_fetch_array($r)) {
+	while($row = mysqli_fetch_array($r)) {
 		$sel = ($selected == $row[$id_col] ? ' selected="selected"' : '');
 		$ret .= "<option value=\"$row[$id_col]\"$sel>$row[$name_col]</option>\n";
 	}

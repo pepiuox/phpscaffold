@@ -94,7 +94,7 @@ if (isset($_POST['scaffold_info'])) {
 
 <div class="container">
 
-<div <? if ($did_scaffold) echo 'style="display:none"'; ?> id="create_crud">
+<div <?php if ($did_scaffold) echo 'style="display:none"'; ?> id="create_crud">
 <form action="<?= $_SERVER['REQUEST_URI'] ?>" method="post">
 
 <p>Welcome to <span style="color:#9D608C;font-weight:bold">phpscaffold.com</span>, where you can
@@ -110,15 +110,15 @@ href="javascript:show_hint()">[Hint]</a></p>
 
 <p><textarea id="sql" name="sql" cols="55" rows="10"><?= (isset($_REQUEST['sql']) ? stripslashes($_REQUEST['sql']) : '') ?></textarea></p>
 
-<? $val = (isset($_REQUEST['project_name']) ? stripslashes($_REQUEST['project_name']) : 'project'); ?>
+<?php $val = (isset($_REQUEST['project_name']) ? stripslashes($_REQUEST['project_name']) : 'project'); ?>
 <p><label>Project folder name</label>
   <input name="project_name" type="text" id="project_name" value="<?= $val ?>" /></p>
 
-<? $val = (isset($_REQUEST['crud_page']) ? stripslashes($_REQUEST['crud_page']) : 'crud.php'); ?>
+<?php $val = (isset($_REQUEST['crud_page']) ? stripslashes($_REQUEST['crud_page']) : 'crud.php'); ?>
 <p><label>CRUD file name</label>
   <input type="text" name="crud_page" value="<?= $val ?>" id="crud_page" /></p>
 
-<? $val = (isset($_REQUEST['search_page']) ? stripslashes($_REQUEST['search_page']) : 'inc.search.php'); ?>
+<?php $val = (isset($_REQUEST['search_page']) ? stripslashes($_REQUEST['search_page']) : 'inc.search.php'); ?>
 <p><label>Search file name</label>
   <input type="text" name="search_page" value="<?= $val ?>" id="search_page" /></p>
 
@@ -128,7 +128,7 @@ href="javascript:show_hint()">[Hint]</a></p>
   <input type="submit" value="Make pages" /></p>
 </form>
 </div>
-<?
+<?php
 if ($did_scaffold) {
 	echo '<h2>Created projects:</h2>';
 	echo list_dir('tmp');

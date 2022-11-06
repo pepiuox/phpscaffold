@@ -1,3 +1,4 @@
 .DS_Store
 webrat.log
 tmp/*
+/nbproject/private/
