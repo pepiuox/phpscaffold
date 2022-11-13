@@ -52,7 +52,7 @@ if (isset($_POST['scaffold_info'])) {
 		if(!is_dir("{$dir}css/")) mkdir("{$dir}css/");
 
 		/* Copy common files */
-		file_put_contents($dir.'index.php', "<?\nheader('Location: $table_name/')\n?>");
+		file_put_contents($dir.'index.php', "<?php\nheader('Location: $table_name/')\n?>");
 		copy($statics.'inc.functions.php', $dir.'inc.functions.php');
 		copy($statics.'inc.layout.php', $dir.'inc.layout.php');
 		copy($statics.'inc.paging.php', $dir.'inc.paging.php');
@@ -83,7 +83,7 @@ if (isset($_POST['scaffold_info'])) {
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 <script type="text/javascript" src="assets/functions.js"></script>
 <title>PHP MySQL CRUD Scaffold</title>
 <link href="assets/style.css" rel="stylesheet" type="text/css" />
@@ -95,7 +95,7 @@ if (isset($_POST['scaffold_info'])) {
 <div class="container">
 
 <div <?php if ($did_scaffold) echo 'style="display:none"'; ?> id="create_crud">
-<form action="<?= $_SERVER['REQUEST_URI'] ?>" method="post">
+<form action="<?php echo $_SERVER['REQUEST_URI'] ?>" method="post">
 
 <p>Welcome to <span style="color:#9D608C;font-weight:bold">phpscaffold.com</span>, where you can
 quickly generate your CRUD scaffold pages for PHP and MySQL.</p>
@@ -108,19 +108,19 @@ if (isset($_POST['scaffold_info']) && !$did_scaffold)
 <p>Enter an SQL table dump to generate your pages. <a
 href="javascript:show_hint()">[Hint]</a></p>
 
-<p><textarea id="sql" name="sql" cols="55" rows="10"><?= (isset($_REQUEST['sql']) ? stripslashes($_REQUEST['sql']) : '') ?></textarea></p>
+<p><textarea id="sql" name="sql" cols="55" rows="10"><?php echo (isset($_REQUEST['sql']) ? stripslashes($_REQUEST['sql']) : '') ?></textarea></p>
 
 <?php $val = (isset($_REQUEST['project_name']) ? stripslashes($_REQUEST['project_name']) : 'project'); ?>
 <p><label>Project folder name</label>
-  <input name="project_name" type="text" id="project_name" value="<?= $val ?>" /></p>
+  <input name="project_name" type="text" id="project_name" value="<?php echo $val ?>" /></p>
 
 <?php $val = (isset($_REQUEST['crud_page']) ? stripslashes($_REQUEST['crud_page']) : 'crud.php'); ?>
 <p><label>CRUD file name</label>
-  <input type="text" name="crud_page" value="<?= $val ?>" id="crud_page" /></p>
+  <input type="text" name="crud_page" value="<?php echo $val ?>" id="crud_page" /></p>
 
 <?php $val = (isset($_REQUEST['search_page']) ? stripslashes($_REQUEST['search_page']) : 'inc.search.php'); ?>
 <p><label>Search file name</label>
-  <input type="text" name="search_page" value="<?= $val ?>" id="search_page" /></p>
+  <input type="text" name="search_page" value="<?php echo $val ?>" id="search_page" /></p>
 
 <p><input type="hidden" name="id_key" id="id_key" value="id" />
   <input type="hidden" name="list_page" id="list_page" value="index.php" />

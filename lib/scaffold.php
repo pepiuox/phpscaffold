@@ -2,11 +2,11 @@
 class Scaffold {
 	public $table = array();
 
-	function Scaffold($project, $table_name, $table_info) {
+	function __construct($project, $table_name, $table_info) {
 		$columns = array();
 		foreach($table_info['columns'] as $key => $value)
 			if (is_array($value))
-				$columns[] = array('tipo' => $value, 'nombre' => $key);
+				$columns[] = array('type' => $value, 'name' => $key);
 		$this->project = $project;
 		$this->table   = $table_name;
 		$this->id_key  = $table_info['id_key'];
@@ -38,7 +38,7 @@ include('../inc.paging.php');
 echo '<table>\n";
 		$return_string .= "  <tr>\n";
 		foreach($this->columns as $v) {
-			$return_string .= '    <th>'. $this->_titleize($v['nombre']) . ' \' . put_order(\''.$v['nombre']."') . '</th>\n";
+			$return_string .= '    <th>'. $this->_titleize($v['name']) . ' \' . put_order(\''.$v['name']."') . '</th>\n";
 		}
 		$return_string .= '    <th colspan="2" style="text-align:center">Actions</th>';
 		$return_string .= "\n  </tr>\n';
@@ -48,16 +48,16 @@ while(\$row = mysqli_fetch_array(\$r)) {\n";
 		$return_string .= "	echo '  <tr>\n";
 
 		foreach($this->columns as $v) {
-			if($v['tipo']['blob'])
-				$val = "limit_chars(nl2br(\$row['".$v['nombre']."']))";
-			elseif($v['tipo']['date'] or $v['tipo']['datetime'])
-				$val = "humanize(\$row['".$v['nombre']."'])";
-			elseif($v['tipo']['bool'])
-				$val = "(\$row['".$v['nombre']."'] ? 'Yes' : 'No')";
+			if($v['type']['blob'])
+				$val = "limit_chars(nl2br(\$row['".$v['name']."']))";
+			elseif($v['type']['date'] or $v['type']['datetime'])
+				$val = "humanize(\$row['".$v['name']."'])";
+			elseif($v['type']['bool'])
+				$val = "(\$row['".$v['name']."'] ? 'Yes' : 'No')";
 			else
-				$val = "\$row['".$v['nombre']."']";
+				$val = "\$row['".$v['name']."']";
 
-			$return_string .= "    <td>' . " . ($v['tipo']['bool'] ? "$val" : "htmlentities($val)") . " . '</td>\n";
+			$return_string .= "    <td>' . " . ($v['type']['bool'] ? "$val" : "htmlentities($val)") . " . '</td>\n";
 		}
 		$return_string .= "    <td><a href=\"{$this->project['crud_page']}?{$this->id_key}=' . \$row['{$this->id_key}'] . '\">Edit</a></td>
     <td><a href=\"{$this->project['crud_page']}?delete=1&amp;{$this->id_key}=' . \$row['{$this->id_key}'] . '\" onclick=\"return confirm(\'Are you sure?\')\">Delete</a></td>
@@ -95,7 +95,7 @@ include('../inc.functions.php');\n\n";
 		$insert = "REPLACE INTO `{$this->table}` (";
 		$counter = 0;
 		foreach($this->columns as $v) {
-			$insert .= "`$v[nombre]`" ;
+			$insert .= "`$v[name]`" ;
 			if ($counter < count($this->columns) - 1)
 				$insert .= ", ";
 			$counter++;
@@ -104,9 +104,9 @@ include('../inc.functions.php');\n\n";
 
 		$counter = 0;
 		foreach ($this->columns as $v) {
-			if ($v['nombre'] != $this->id_key) {
-				$field = $v['nombre'];
-				$val = $this->_parse($field, $v['tipo']);
+			if ($v['name'] != $this->id_key) {
+				$field = $v['name'];
+				$val = $this->_parse($field, $v['type']);
 				$insert .= "'$val'";
 				if ($counter < count($this->columns) - 2)
 					$insert .= ", ";
@@ -128,7 +128,7 @@ print_header(\"{$this->project['project_name']} » " . $this->_titleize($this->t
 ?>\n";
 
 $return_string .= $this->_build_form($this->columns, 'Add / Edit') . '
-<?
+<?php
 print_footer();
 ?>';
 
@@ -142,7 +142,7 @@ print_footer();
 		$return_string .= '$opts = array(';
 		$cols = '';
 		foreach($this->columns as $col) {
-			$cols .= "'{$col['nombre']}_opts', ";
+			$cols .= "'{$col['name']}_opts', ";
 		}
 		$return_string .= substr($cols, 0, -2) . ");\n"
 . '/* Sorround "contains" search term between %% */
@@ -153,8 +153,8 @@ foreach ($opts as $o) {
 	}
 }'."\n\n";
 		foreach($this->columns as $col) {
-			$return_string .= "if (search_by('{$col['nombre']}'))
-	\$conds .= \" AND {$col['nombre']} {\$_GET['{$col['nombre']}_opts']} '{\$_GET['{$col['nombre']}']}'\";\n";
+			$return_string .= "if (search_by('{$col['name']}'))
+	\$conds .= \" AND {$col['name']} {\$_GET['{$col['name']}_opts']} '{\$_GET['{$col['name']}']}'\";\n";
 		}
 
 		return $return_string . "?>";
@@ -167,7 +167,7 @@ foreach ($opts as $o) {
 		if ($is_search)
 			$legend = "<a href=\"#\" onclick=\"$('#search-form').slideToggle()\">$legend</a>";
 
-		$res = '<form action="<?= $_SERVER[\'REQUEST_URI\'] ?>" method="'.$method.'">
+		$res = '<form action="<?php echo $_SERVER[\'REQUEST_URI\'] ?>" method="'.$method.'">
 <fieldset>
 <legend>' . $legend . '</legend>
 <div' . ($is_search ? ' id="search-form" style="display:none"' : '') . '>
@@ -186,27 +186,27 @@ foreach ($opts as $o) {
 	}
 
 	function _form_input($col, $value, $is_search = false) {
-		if ($col['nombre'] != $this->id_key) {
+		if ($col['name'] != $this->id_key) {
 
-		$text = '  <li><label><span>' . $this->_titleize($col['nombre']) . ":</span>\n";
+		$text = '  <li><label><span>' . $this->_titleize($col['name']) . ":</span>\n";
 		if ($is_search)
-			$text .= "    <?= search_options('".$col['nombre']."', (isset(\$_GET['".$col['nombre']."_opts']) ? stripslashes(\$_GET['".$col['nombre']."_opts']) : '')) ?></label>\n";
+			$text .= "    <?php echo search_options('".$col['name']."', (isset(\$_GET['".$col['name']."_opts']) ? stripslashes(\$_GET['".$col['name']."_opts']) : '')) ?></label>\n";
 		$text .= '    ';
 
 		/* Takes value either from $_GET['id'] or from $row['id'] */
-		$val = '$'.$value.'[\''.$col['nombre'].'\']';
+		$val = '$'.$value.'[\''.$col['name'].'\']';
 		$isset_val = '(isset('.$val.') ? stripslashes('.$val.') : \'\')';
 
-		if ($col['tipo']['bool'])
-			$text .= '<input type="checkbox" name="'.$col['nombre'].'" value="1" <?= (isset('.$val.') && '.$val.' ? \'checked="checked"\' : \'\') ?> />';
-		elseif ($col['tipo']['date'])
-			$text .= '<?= input_date(\''.$col['nombre'].'\', ' . $isset_val . ') ?>';
-		elseif ($col['tipo']['datetime'])
-			$text .= '<?= input_datetime(\''.$col['nombre'].'\', ' . $isset_val . ') ?>';
-		elseif ($col['tipo']['blob'])
-			$text .= '<textarea name="'.$col['nombre'].'" cols="40" rows="10"><?= ' . $isset_val . ' ?></textarea>';
+		if ($col['type']['bool'])
+			$text .= '<input type="checkbox" name="'.$col['name'].'" value="1" <?php echo (isset('.$val.') && '.$val.' ? \'checked="checked"\' : \'\') ?> />';
+		elseif ($col['type']['date'])
+			$text .= '<?php echo input_date(\''.$col['name'].'\', ' . $isset_val . ') ?>';
+		elseif ($col['type']['datetime'])
+			$text .= '<?php echo input_datetime(\''.$col['name'].'\', ' . $isset_val . ') ?>';
+		elseif ($col['type']['blob'])
+			$text .= '<textarea name="'.$col['name'].'" cols="40" rows="10"><?php echo ' . $isset_val . ' ?></textarea>';
 		else
-			$text .= '<input type="text" name="'.$col['nombre'].'" value="<?= (isset('.$val.') ? stripslashes('.$val.') : \'\') ?>" />';
+			$text .= '<input type="text" name="'.$col['name'].'" value="<?php echo (isset('.$val.') ? stripslashes('.$val.') : \'\') ?>" />';
 
 		if (!$is_search) $text .= '</label>'; /* Could be closed after search_options */
 		return $text . "</li>\n";

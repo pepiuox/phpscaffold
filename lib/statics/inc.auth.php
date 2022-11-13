@@ -24,7 +24,7 @@ if (strlen($msg) > 0) echo "<p id=\"msg\">$msg</p>";
 
 if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true) {
 ?>
-<form action="<?= $_SERVER['REQUEST_URI'] ?>" method="post">
+<form action="<?php echo $_SERVER['REQUEST_URI'] ?>" method="post">
 <p>You need to log in to edit this database.</p>
 <ul>
   <li><label>User: <input type="text" name="user" /></label></li>
